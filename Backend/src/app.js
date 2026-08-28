@@ -14,6 +14,7 @@ const allowedOrigins = isProduction ? [env.FRONTEND_URL] : [env.FRONTEND_URL, "h
 app.use(cors({ origin: (origin, callback) => { if (!origin || allowedOrigins.includes(origin)) return callback(null, true); callback(new Error("Origin not allowed")); }, credentials: true }));
 app.use(express.json({ limit: "20kb" }));
 app.use(cookieParser());
+app.get("/", (req, res) => res.json({ success: true, name: "Auth2 API", health: "/health" }));
 app.get("/health", (req, res) => res.json({ success: true, status: "ok" }));
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);

@@ -5,6 +5,7 @@ services:
     rootDir: Backend
     buildCommand: pnpm install --frozen-lockfile
     startCommand: pnpm start
+    healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
