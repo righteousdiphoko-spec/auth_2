@@ -1,0 +1,11 @@
+import { Router } from "express";
+import * as controller from "../controllers/users.js";
+import { authenticate } from "../middleware/auth.js";
+import { validate } from "../middleware/validate.js";
+import { profileSchema, deleteAccountSchema } from "../validators/auth.js";
+const router = Router();
+router.use(authenticate);
+router.get("/me", controller.me);
+router.patch("/me", validate(profileSchema), controller.updateMe);
+router.delete("/me", validate(deleteAccountSchema), controller.deleteMe);
+export default router;

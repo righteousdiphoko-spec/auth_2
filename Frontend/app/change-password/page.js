@@ -1,0 +1,8 @@
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Protected from "@/components/Protected";
+import { Alert, Button, Card, Field } from "@/components/ui";
+import { request } from "@/lib/api";
+export default function ChangePasswordPage() { return <Protected>{() => <ChangeForm />}</Protected>; }
+function ChangeForm() { const router = useRouter(); const [form, setForm] = useState({ currentPassword: "", password: "", confirmPassword: "" }); const [error, setError] = useState(""); const [loading, setLoading] = useState(false); const submit = async (e) => { e.preventDefault(); setLoading(true); setError(""); try { await request("/auth/change-password", form); router.push("/login?changed=success"); } catch (err) { setError(err.message); } finally { setLoading(false); } }; return <div className="max-w-2xl"><h1 className="font-display text-5xl">Change password</h1><p className="mt-3 text-ink/60">Changing it signs you out everywhere else.</p><Card className="mt-8"><form className="grid gap-5" onSubmit={submit}>{error && <Alert>{error}</Alert>}<Field label="Current password" type="password" required value={form.currentPassword} onChange={(e) => setForm({ ...form, currentPassword: e.target.value })} /><Field label="New password" type="password" required value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /><Field label="Confirm new password" type="password" required value={form.confirmPassword} onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })} /><Button loading={loading}>Change password</Button></form></Card></div>; }

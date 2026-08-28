@@ -1,0 +1,8 @@
+"use client";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { AuthLayout } from "@/components/AuthLayout";
+import { Alert, Button, Card, Field } from "@/components/ui";
+import { request } from "@/lib/api";
+export default function ResetPasswordPage() { const router = useRouter(); const [token, setToken] = useState(""); const [form, setForm] = useState({ password: "", confirmPassword: "" }); const [error, setError] = useState(""); const [loading, setLoading] = useState(false); useEffect(() => setToken(new URLSearchParams(window.location.search).get("token") || ""), []); const submit = async (e) => { e.preventDefault(); setLoading(true); setError(""); try { await request("/auth/reset-password", { ...form, token }); router.push("/login?reset=success"); } catch (err) { setError(err.message); } finally { setLoading(false); } }; return <AuthLayout eyebrow="Account recovery" title="Choose a new secret." footer={<>Back to <Link className="font-bold text-coral" href="/login">sign in</Link></>}><Card><form className="grid gap-5" onSubmit={submit}><h2 className="font-display text-3xl">Reset password</h2>{error && <Alert>{error}</Alert>}<Field label="New password" type="password" autoComplete="new-password" required value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /><Field label="Confirm new password" type="password" autoComplete="new-password" required value={form.confirmPassword} onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })} /><Button loading={loading}>Reset password</Button></form></Card></AuthLayout>; }

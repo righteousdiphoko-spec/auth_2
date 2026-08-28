@@ -1,0 +1,13 @@
+import { authService } from "../services/auth.js";
+import { clearAuthCookies, setAuthCookies } from "../utils/cookies.js";
+import { asyncHandler } from "../utils/errors.js";
+const ok = (res, data = {}) => res.json({ success: true, ...data });
+export const register = asyncHandler(async (req, res) => { const user = await authService.register(req.validated); ok(res, { message: "If registration succeeded, check your email to verify your account.", user }); });
+export const login = asyncHandler(async (req, res) => { const result = await authService.login(req.validated, req); setAuthCookies(res, result.session.accessToken, result.session.refreshToken, result.session.maxAge); ok(res, { user: result.user }); });
+export const refresh = asyncHandler(async (req, res) => { const result = await authService.refresh(req.cookies.refresh_token, req); setAuthCookies(res, result.session.accessToken, result.session.refreshToken, result.session.maxAge); ok(res, { user: result.user }); });
+export const logout = asyncHandler(async (req, res) => { await authService.logout(req.cookies.refresh_token); clearAuthCookies(res); ok(res, { message: "Signed out" }); });
+export const verifyEmail = asyncHandler(async (req, res) => { await authService.verifyEmail(req.validated.token); ok(res, { message: "Email verified" }); });
+export const resendVerification = asyncHandler(async (req, res) => { await authService.resendVerification(req.validated.email); ok(res, { message: "If the account can receive email, a new verification link has been sent." }); });
+export const forgotPassword = asyncHandler(async (req, res) => { await authService.forgotPassword(req.validated.email); ok(res, { message: "If an account exists for this email, you will receive a password reset link." }); });
+export const resetPassword = asyncHandler(async (req, res) => { await authService.resetPassword(req.validated); clearAuthCookies(res); ok(res, { message: "Password reset. Please sign in again." }); });
+export const changePassword = asyncHandler(async (req, res) => { await authService.changePassword(req.user, req.validated); clearAuthCookies(res); ok(res, { message: "Password changed. Please sign in again." }); });

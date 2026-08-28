@@ -1,0 +1,12 @@
+{
+  "name": "auth2",
+  "private": true,
+  "version": "1.0.0",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "dev": "concurrently -n api,web -c cyan,magenta \"corepack pnpm --filter @auth2/api dev\" \"corepack pnpm --filter @auth2/web dev\"",
+    "build": "corepack pnpm --filter @auth2/web build",
+    "start": "corepack pnpm --filter @auth2/api start"
+  },
+  "devDependencies": { "concurrently": "^9.1.2" }
+}
